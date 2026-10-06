@@ -32,8 +32,9 @@ public class RobotConstants {
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static final RevHubOrientationOnRobot.UsbFacingDirection IMU_USB_DIRECTION =
             RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-    public static final String MOTOR_INTAKE = "intake";
-    public static final String SERVO_FEEDER = "feeder";
+    public static final String MOTOR_INTAKE = "intakeMotor";
+    public static final String SERVO_FEEDER = "crServo";
+    public static final String SERVO_PUSHER = "pollenServo";
     public static final String MOTOR_FLY = "flywheel";
 
     // ---------- LIMELIGHT NUMBERS ----------
@@ -52,4 +53,8 @@ public class RobotConstants {
     public static final double FLYWHEEL_TARGET_VELOCITY = 1160;
 
     public static final double ROBOT_LAUNCH_SECONDS = 2.5;
+
+    // ---------- ROBOT POSITIONS ----------
+    public static final double PUSHER_POS_UP = 0.4;
+    public static final double PUSHER_POS_DOWN = 0.0;
 }

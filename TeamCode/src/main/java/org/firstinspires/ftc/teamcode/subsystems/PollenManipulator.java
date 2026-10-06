@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.RobotConstants;
@@ -23,6 +24,7 @@ public class PollenManipulator {
     // Initialize hardware variables
     private final DcMotor pollenIntake;
     private final CRServo pollenFeeder;
+    private final Servo pollenPusher;
     private final DcMotorEx flyWheel;
 
     private final ElapsedTime launchTimer = new ElapsedTime();
@@ -45,6 +47,7 @@ public class PollenManipulator {
     public PollenManipulator(HardwareMap hardwareMap) {
         pollenIntake = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_INTAKE);
         pollenFeeder = hardwareMap.get(CRServo.class, RobotConstants.SERVO_FEEDER);
+        pollenPusher = hardwareMap.get(Servo.class, RobotConstants.SERVO_PUSHER);
         flyWheel = hardwareMap.get(DcMotorEx.class, RobotConstants.MOTOR_FLY);
 
         // Change directions if they backwards
