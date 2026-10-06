@@ -36,26 +36,24 @@ public class StarterBot2627 extends LinearOpMode {
             double driveY = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
 
+            // Update launch button status
+            boolean newLaunchPress = gamepad1.x && !xPressed;
+            xPressed = gamepad1.x;
+
             // Switch pollen manipulator modes
             if (gamepad1.a) {
                 // Intake pollen
                 pollenManipulator.setState(PollenManipulator.State.INTAKING);
-            } else if (gamepad1.x && !xPressed) {
-                xPressed = true;
-
+            } else if (newLaunchPress) {
                 // Spin up and launch if hold or intaking
                 if (pollenManipulator.getCurrentState() == PollenManipulator.State.HOLD
                         || pollenManipulator.getCurrentState() == PollenManipulator.State.INTAKING) {
                     pollenManipulator.setState(PollenManipulator.State.FLY_SPINUP);
                 }
-            } else if (!gamepad1.a &&
-                    pollenManipulator.getCurrentState() == PollenManipulator.State.INTAKING) {
+            } else if (pollenManipulator.getCurrentState() == PollenManipulator.State.INTAKING) {
                 // Drop back to HOLD if not intaking or in launch sequence
                 pollenManipulator.setState(PollenManipulator.State.HOLD);
             }
-
-            // Update launch button status
-            xPressed = gamepad1.x;
 
             // Reset imu direction on button press
             if (gamepad1.options) {
