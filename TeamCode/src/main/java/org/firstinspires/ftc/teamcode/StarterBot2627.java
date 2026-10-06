@@ -95,6 +95,7 @@ public class StarterBot2627 extends LinearOpMode {
 
         telemetry.addLine("Hold a for intake, tap x for launch sequence");
         telemetry.addData("Current intake state", pollenManipulator.getCurrentState());
+        telemetry.addData("Intake velocity", (int) pollenManipulator.getFlywheelVelocity());
         telemetry.addLine();
         telemetry.addData("Left motor power", "%.2f", driveTrain.getLeftPower());
         telemetry.addData("Right motor power", "%.2f", driveTrain.getRightPower());

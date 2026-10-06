@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.RobotConstants;
@@ -24,22 +23,23 @@ public class PollenManipulator {
     // Initialize hardware variables
     private final DcMotor pollenIntake;
     private final CRServo pollenFeeder;
-    private final Servo pollenPusher;
     private final DcMotorEx flyWheel;
 
     private final ElapsedTime launchTimer = new ElapsedTime();
 
     /**
-     * HOLD: Everything stopped
-     * INTAKING: Intake running forward, flywheel stopped
-     * FLY_SPINUP: Flywheel running, intake stopped (waiting to reach speed)
-     * LAUNCH: Flywheel running, intake running forward to feed pollen into flywheel
+     * HOLD: Everything stopped<br>
+     * INTAKING: Intake running forward, flywheel stopped<br>
+     * FLY_SPINUP: Flywheel running, intake stopped (waiting to reach speed)<br>
+     * LAUNCH: Flywheel running, intake running forward to feed pollen into flywheel<br>
+     * LAUNCH_MANUAL_HALT: Same as LAUNCH, does not automatically stop after launching one pollen
      */
     public enum State {
         HOLD,
         INTAKING,
         FLY_SPINUP,
-        LAUNCH
+        LAUNCH,
+        LAUNCH_MANUAL_HALT
     }
 
     private State currentState = State.HOLD;
@@ -47,7 +47,6 @@ public class PollenManipulator {
     public PollenManipulator(HardwareMap hardwareMap) {
         pollenIntake = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_INTAKE);
         pollenFeeder = hardwareMap.get(CRServo.class, RobotConstants.SERVO_FEEDER);
-        pollenPusher = hardwareMap.get(Servo.class, RobotConstants.SERVO_PUSHER);
         flyWheel = hardwareMap.get(DcMotorEx.class, RobotConstants.MOTOR_FLY);
 
         // Change directions if they backwards
@@ -82,6 +81,10 @@ public class PollenManipulator {
      */
     public State getCurrentState() {
         return this.currentState;
+    }
+
+    public double getFlywheelVelocity() {
+        return flyWheel.getVelocity();
     }
 
     /**
@@ -120,6 +123,18 @@ public class PollenManipulator {
                 if (launchTimer.seconds() >= RobotConstants.ROBOT_LAUNCH_SECONDS) {
                     setState(State.HOLD);
                 }
+                break;
+            case LAUNCH_MANUAL_HALT:
+                pollenIntake.setPower(0.0);
+                // Keep wheel spinning, then push pollen in
+                flyWheel.setVelocity(RobotConstants.FLYWHEEL_TARGET_VELOCITY);
+
+                // Wait for spinup then launch
+                if (flyWheel.getVelocity() >= RobotConstants.FLYWHEEL_TARGET_VELOCITY - 20 &&
+                        flyWheel.getVelocity() <= RobotConstants.FLYWHEEL_TARGET_VELOCITY + 20) {
+                    pollenFeeder.setPower(RobotConstants.FEEDER_SPEED);
+                }
+
                 break;
         }
     }
