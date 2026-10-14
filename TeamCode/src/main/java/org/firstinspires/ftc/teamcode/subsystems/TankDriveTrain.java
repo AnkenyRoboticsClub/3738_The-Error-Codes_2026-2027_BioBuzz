@@ -46,7 +46,7 @@ public class TankDriveTrain {
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
         // Reverse direction as needed
-        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**

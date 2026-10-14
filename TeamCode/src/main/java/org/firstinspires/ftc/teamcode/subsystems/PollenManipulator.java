@@ -27,6 +27,11 @@ public class PollenManipulator {
 
     private final ElapsedTime launchTimer = new ElapsedTime();
 
+    private double manualIntakePower = 0.0;
+    private double manualFeederPower = 0.0;
+    private double manualFlyVelocity = 0.0;
+    private boolean overrideActive = false;
+
     /**
      * HOLD: Everything stopped<br>
      * INTAKING: Intake running forward, flywheel stopped<br>
@@ -39,7 +44,8 @@ public class PollenManipulator {
         INTAKING,
         FLY_SPINUP,
         LAUNCH,
-        LAUNCH_MANUAL_HALT
+        LAUNCH_MANUAL_HALT,
+        MANUAL_CONTROL
     }
 
     private State currentState = State.HOLD;
@@ -66,7 +72,9 @@ public class PollenManipulator {
      * @param state See State enum
      */
     public void setState(State state) {
-        if (this.currentState != state) {
+        if (overrideActive) {
+            this.currentState = State.MANUAL_CONTROL;
+        } else if (this.currentState != state) {
             if (state == State.LAUNCH) {
                 // Reset launch timer
                 launchTimer.reset();
@@ -85,6 +93,32 @@ public class PollenManipulator {
 
     public double getFlywheelVelocity() {
         return flyWheel.getVelocity();
+    }
+
+    /**
+     * Manual Override Interface for TeleOp
+     * Calling this transitions the subsystem to MANUAL_OVERRIDE state.
+     *
+     * @param intakePower Power for the intake (-1.0 to 1.0)
+     * @param feederPower Power for the feeder CRServo (-1.0 to 1.0)
+     * @param flyWheelVelocity Target velocity for the flywheel
+     */
+    public void setManualControls(double intakePower, double feederPower, double flyWheelVelocity) {
+        this.manualIntakePower = intakePower;
+        this.manualFeederPower = feederPower;
+        this.manualFlyVelocity = flyWheelVelocity;
+
+        // Lock down state changing
+        this.overrideActive = true;
+        this.currentState = State.MANUAL_CONTROL;
+    }
+
+    /**
+     * Disables manual override
+     */
+    public void disableOverride() {
+        this.overrideActive = false;
+        this.currentState = State.HOLD;
     }
 
     /**
@@ -135,6 +169,11 @@ public class PollenManipulator {
                     pollenFeeder.setPower(RobotConstants.FEEDER_SPEED);
                 }
 
+                break;
+            case MANUAL_CONTROL:
+                pollenIntake.setPower(manualIntakePower);
+                pollenFeeder.setPower(manualFeederPower);
+                flyWheel.setVelocity(manualFlyVelocity);
                 break;
         }
     }

@@ -24,6 +24,10 @@ public class StarterBot2627 extends LinearOpMode {
 
     // Statuses
     private boolean xPressed = false;
+    private double manualIntakeInput = 0.0;
+    private double manualFeederInput = 0.0;
+    private double manualFlywheelTarget = 0.0;
+
 
     @Override
     public void runOpMode() {
@@ -50,6 +54,35 @@ public class StarterBot2627 extends LinearOpMode {
                 boolean newLaunchPress = gamepad1.x && !xPressed;
                 xPressed = gamepad1.x;
 
+                // Manual control override
+                manualIntakeInput = 0.0;
+                if (gamepad1.right_bumper) {
+                    manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
+                } else if (gamepad1.left_bumper) {
+                    manualIntakeInput = -RobotConstants.INTAKE_SPEED;
+                }
+
+                manualFeederInput = 0.0;
+                if (gamepad1.right_trigger > 0.5) {
+                    manualFeederInput = RobotConstants.FEEDER_SPEED;
+                }
+
+                manualFlywheelTarget = 0.0;
+                if (gamepad1.left_trigger > 0.5) {
+                    manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
+                }
+
+                // 2. State Decision Tree: Check if manual controls are active
+                boolean isManualInputActive = (Math.abs(manualIntakeInput) > 0.05) ||
+                        (Math.abs(manualFeederInput) > 0.05) ||
+                        gamepad1.right_bumper;
+
+                if (isManualInputActive) {
+                    pollenManipulator.setManualControls(manualIntakeInput, manualFeederInput, manualFlywheelTarget);
+                } else if (gamepad1.b) {
+                    pollenManipulator.disableOverride();
+                }
+
                 // Switch pollen manipulator modes
                 if (gamepad1.a) {
                     // Intake pollen
@@ -75,9 +108,9 @@ public class StarterBot2627 extends LinearOpMode {
                 pollenManipulator.run();
 
                 // Servo control for poking out pollen
-                if (gamepad1.aWasPressed()) {
+                if (gamepad1.dpad_down) {
                     pollenPusher.setPosition(RobotConstants.PUSHER_POS_DOWN);
-                } else if (gamepad1.bWasPressed()) {
+                } else if (gamepad1.dpad_up) {
                     pollenPusher.setPosition(RobotConstants.PUSHER_POS_UP);
                 }
 
