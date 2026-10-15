@@ -75,11 +75,11 @@ public class PollenManipulator {
         if (overrideActive) {
             this.currentState = State.MANUAL_CONTROL;
         } else if (this.currentState != state) {
+            this.currentState = state;
             if (state == State.LAUNCH) {
                 // Reset launch timer
                 launchTimer.reset();
             }
-            this.currentState = state;
         }
     }
 
@@ -167,6 +167,8 @@ public class PollenManipulator {
                 if (flyWheel.getVelocity() >= RobotConstants.FLYWHEEL_TARGET_VELOCITY - 20 &&
                         flyWheel.getVelocity() <= RobotConstants.FLYWHEEL_TARGET_VELOCITY + 20) {
                     pollenFeeder.setPower(RobotConstants.FEEDER_SPEED);
+                } else {
+                    pollenFeeder.setPower(0.0);
                 }
 
                 break;

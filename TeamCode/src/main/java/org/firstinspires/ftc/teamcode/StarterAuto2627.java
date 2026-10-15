@@ -50,6 +50,7 @@ public class StarterAuto2627 extends LinearOpMode {
             // Launch all preloaded pollen
             while (opModeIsActive() && autoTimer.seconds() <= 15) {
                 pollenManipulator.setState(PollenManipulator.State.LAUNCH_MANUAL_HALT);
+                pollenManipulator.run(); // Run pollen manipulator
                 updateDriveTelemetry();
             }
 

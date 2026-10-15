@@ -54,17 +54,17 @@ public class StarterBot2627 extends LinearOpMode {
                 boolean newLaunchPress = gamepad1.x && !xPressed;
                 xPressed = gamepad1.x;
 
-                // Manual control override
+                // ---------- Manual controls ----------
                 manualIntakeInput = 0.0;
                 if (gamepad1.right_bumper) {
                     manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
                 } else if (gamepad1.left_bumper) {
-                    manualIntakeInput = -RobotConstants.INTAKE_SPEED;
+                    manualIntakeInput = -RobotConstants.INTAKE_SPEED; // Outtake
                 }
 
                 manualFeederInput = 0.0;
                 if (gamepad1.right_trigger > 0.5) {
-                    manualFeederInput = RobotConstants.FEEDER_SPEED;
+                    manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
                 }
 
                 manualFlywheelTarget = 0.0;
@@ -72,18 +72,19 @@ public class StarterBot2627 extends LinearOpMode {
                     manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
                 }
 
-                // 2. State Decision Tree: Check if manual controls are active
+                // Check if manual controls are active
                 boolean isManualInputActive = (Math.abs(manualIntakeInput) > 0.05) ||
                         (Math.abs(manualFeederInput) > 0.05) ||
-                        gamepad1.right_bumper;
+                        (Math.abs(manualFlywheelTarget) > 0.05);
 
                 if (isManualInputActive) {
                     pollenManipulator.setManualControls(manualIntakeInput, manualFeederInput, manualFlywheelTarget);
-                } else if (gamepad1.b) {
+                } else if (pollenManipulator.getCurrentState() == PollenManipulator.State.MANUAL_CONTROL || gamepad1.b) {
+                    // If no manual controls are being given, stop overriding to allow for regular pollen manipulation
                     pollenManipulator.disableOverride();
                 }
 
-                // Switch pollen manipulator modes
+                // ---------- Switch pollen manipulator modes ----------
                 if (gamepad1.a) {
                     // Intake pollen
                     pollenManipulator.setState(PollenManipulator.State.INTAKING);

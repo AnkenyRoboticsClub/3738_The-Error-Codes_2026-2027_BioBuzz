@@ -68,8 +68,8 @@ public class TankDriveTrain {
 
         turn *= RobotConstants.TURN_MULTIPLIER;
 
-        double leftPower = driveY + turn;
-        double rightPower = driveY - turn;
+        double leftPower = (-driveY) + turn;
+        double rightPower = (-driveY) - turn;
 
         double powerClip = Math.max(Math.abs(leftPower), Math.abs(rightPower));
 
