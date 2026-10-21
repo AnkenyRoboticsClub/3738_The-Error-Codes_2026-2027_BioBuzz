@@ -70,8 +70,10 @@ public class StarterBot2627 extends LinearOpMode {
                     manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
                 }
 
-                if (gamepad1.left_trigger > 0.5) {
+                if (gamepad1.left_trigger > 0.5 || gamepad1.b) {
                     manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
+                } else if (gamepad1.y) {
+                    manualFlywheelTarget = -RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Backwards!
                 }
 
                 // Check if manual controls are active

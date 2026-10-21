@@ -167,8 +167,10 @@ public class PollenManipulator {
                 if (flyWheel.getVelocity() >= RobotConstants.FLYWHEEL_TARGET_VELOCITY - 20 &&
                         flyWheel.getVelocity() <= RobotConstants.FLYWHEEL_TARGET_VELOCITY + 20) {
                     pollenFeeder.setPower(RobotConstants.FEEDER_SPEED);
+                    pollenIntake.setPower(RobotConstants.INTAKE_SPEED);
                 } else {
                     pollenFeeder.setPower(0.0);
+                    pollenIntake.setPower(0.0);
                 }
 
                 break;

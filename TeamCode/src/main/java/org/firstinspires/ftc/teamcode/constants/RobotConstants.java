@@ -31,7 +31,7 @@ public class RobotConstants {
     public static final RevHubOrientationOnRobot.LogoFacingDirection IMU_LOGO_DIRECTION =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static final RevHubOrientationOnRobot.UsbFacingDirection IMU_USB_DIRECTION =
-            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
     public static final String MOTOR_INTAKE = "intakeMotor";
     public static final String SERVO_FEEDER = "crServo";
     public static final String SERVO_PUSHER = "pollenServo";
