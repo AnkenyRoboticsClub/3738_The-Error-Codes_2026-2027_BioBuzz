@@ -20,18 +20,6 @@ import org.firstinspires.ftc.teamcode.constants.RobotConstants;
  * </blockquote>
  */
 public class PollenManipulator {
-    // Initialize hardware variables
-    private final DcMotor pollenIntake;
-    private final CRServo pollenFeeder;
-    private final DcMotorEx flyWheel;
-
-    private final ElapsedTime launchTimer = new ElapsedTime();
-
-    private double manualIntakePower = 0.0;
-    private double manualFeederPower = 0.0;
-    private double manualFlyVelocity = 0.0;
-    private boolean overrideActive = false;
-
     /**
      * HOLD: Everything stopped<br>
      * INTAKING: Intake running forward, flywheel stopped<br>
@@ -47,6 +35,18 @@ public class PollenManipulator {
         LAUNCH_MANUAL_HALT,
         MANUAL_CONTROL
     }
+
+    // Initialize hardware variables
+    private final DcMotor pollenIntake;
+    private final CRServo pollenFeeder;
+    private final DcMotorEx flyWheel;
+
+    private final ElapsedTime launchTimer = new ElapsedTime();
+
+    private double manualIntakePower = 0.0;
+    private double manualFeederPower = 0.0;
+    private double manualFlyVelocity = 0.0;
+    private boolean overrideActive = false;
 
     private State currentState = State.HOLD;
 
@@ -69,6 +69,11 @@ public class PollenManipulator {
 
     /**
      * Set manipulator state
+     * This class works by checking if manual controls are being used.
+     * If they are, set the state to MANUAL_CONTROL
+     * Otherwise, set the state to the passed parameter, and
+     *      if setting to launch, reset the launch timer
+     *      so only one pollen is launched.
      * @param state See State enum
      */
     public void setState(State state) {
@@ -85,7 +90,8 @@ public class PollenManipulator {
 
     /**
      * Get manipulator state (for telemetry)
-     * @return Current state as a string
+     * @return Current state as a State object,
+     * automatically converted to a String in telemetry
      */
     public State getCurrentState() {
         return this.currentState;
@@ -108,7 +114,7 @@ public class PollenManipulator {
         this.manualFeederPower = feederPower;
         this.manualFlyVelocity = flyWheelVelocity;
 
-        // Lock down state changing
+        // Prevent state changing while calling setManualControls
         this.overrideActive = true;
         this.currentState = State.MANUAL_CONTROL;
     }
@@ -153,7 +159,7 @@ public class PollenManipulator {
                 flyWheel.setVelocity(RobotConstants.FLYWHEEL_TARGET_VELOCITY);
                 pollenFeeder.setPower(RobotConstants.FEEDER_SPEED);
 
-                // Reset back to HOLD
+                // Reset back to HOLD after one pollen has been launched.
                 if (launchTimer.seconds() >= RobotConstants.ROBOT_LAUNCH_SECONDS) {
                     setState(State.HOLD);
                 }

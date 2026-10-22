@@ -26,7 +26,7 @@ public class MecanumDriveTrain {
     }
 
     // Set initial drive mode here
-    DriveMode driveMode = DriveMode.FIELD_CENTRIC;
+    private DriveMode driveMode = DriveMode.FIELD_CENTRIC;
 
     // Initialize hardware variables
     private final DcMotor leftBack;
