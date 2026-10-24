@@ -33,6 +33,10 @@ public class StarterAuto2627 extends LinearOpMode {
         pollenManipulator = new PollenManipulator(hardwareMap);
         pollenPusher = hardwareMap.get(Servo.class, RobotConstants.SERVO_PUSHER);
 
+        // Ensure that pollen pusher is up and out of the way
+        // (set up position in INIT stage)
+        pollenPusher.setPosition(RobotConstants.PUSHER_POS_UP);
+
         telemetry.addData("Status", "Running");
         telemetry.update();
 
@@ -40,15 +44,15 @@ public class StarterAuto2627 extends LinearOpMode {
 
         if (opModeIsActive()) {
             // Code that runs once on start
-            pollenPusher.setPosition(RobotConstants.PUSHER_POS_UP);
-
             autoTimer.reset(); // Reset autoTimer
 
             // Autonomous code
             driveAuto(0.25, 0, 700); // Move off the wall
 
             // Launch all preloaded pollen
-            while (opModeIsActive() && autoTimer.seconds() <= 15) {
+            // Takes AT MOST 15 seconds to launch all pollen from the robot
+            int launchingDuration = 15;
+            while (opModeIsActive() && autoTimer.seconds() <= launchingDuration) {
                 pollenManipulator.setState(PollenManipulator.State.LAUNCH_MANUAL_HALT);
                 pollenManipulator.run(); // Run pollen manipulator
                 updateDriveTelemetry();
