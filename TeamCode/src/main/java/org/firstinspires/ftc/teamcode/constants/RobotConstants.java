@@ -50,7 +50,7 @@ public class RobotConstants {
     public static final double INTAKE_SPEED = 0.5;
     public static final double FEEDER_SPEED = 1.0;
 
-    public static final double FLYWHEEL_TARGET_VELOCITY = 1800;
+    public static final double FLYWHEEL_TARGET_VELOCITY = 1160;
 
     public static final double ROBOT_LAUNCH_SECONDS = 2.5;
 
