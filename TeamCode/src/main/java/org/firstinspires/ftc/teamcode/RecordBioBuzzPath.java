@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -15,12 +16,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@TeleOp(group = "PathRecording")
+@TeleOp(group = "Path Recording")
 public class RecordBioBuzzPath extends LinearOpMode {
     // BioBuzz Starter Bot Configuration
     private DcMotor leftDrive;
     private DcMotor rightDrive;
-    private DcMotor flywheelMotor;
+    private DcMotorEx flywheelMotor;
     private CRServo feederServo;
     private DcMotor intakeMotor;
     private Servo pusherServo;
@@ -37,10 +38,10 @@ public class RecordBioBuzzPath extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Hardware Mapping matching REV Starter Bot defaults
+        // Hardware maps
         leftDrive = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_TANK_LEFT);
-        rightDrive = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_TANK_LEFT);
-        flywheelMotor = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_FLY);
+        rightDrive = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_TANK_RIGHT);
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.MOTOR_FLY);
         feederServo = hardwareMap.get(CRServo.class, RobotConstants.SERVO_FEEDER);
         intakeMotor = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_INTAKE);
         pusherServo = hardwareMap.get(Servo.class, RobotConstants.SERVO_PUSHER);
@@ -48,6 +49,8 @@ public class RecordBioBuzzPath extends LinearOpMode {
         // Starter bot basic direction setup
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        double pusherPosition = RobotConstants.PUSHER_POS_UP; // Set pollen pusher up at start
 
         // Control Hub Scoped Storage Path (Safe for Android 10+)
         File logFile = AppUtil.getInstance().getSettingsFile("biobuzz_path.csv");
@@ -64,7 +67,7 @@ public class RecordBioBuzzPath extends LinearOpMode {
 
             // 1. Tank Drive Controls
             double drive = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
+            double turn = -gamepad1.right_stick_x;
             double leftPower = drive + turn;
             double rightPower = drive - turn;
 
@@ -74,27 +77,44 @@ public class RecordBioBuzzPath extends LinearOpMode {
                 leftPower /= max;
                 rightPower /= max;
             }
+
+            // Slow down
+            double powerMult = 0.5;
+            leftPower *= powerMult;
+            rightPower *= powerMult;
+
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
 
             // 2. Flywheel Launcher Controls
-            double flywheelPower = gamepad1.right_trigger;
-            flywheelMotor.setPower(flywheelPower);
+            double flywheelPower = 0.0;
+            if (gamepad1.left_trigger > 0.5) {
+                flywheelPower = RobotConstants.FLYWHEEL_TARGET_VELOCITY;
+            } else {
+                flywheelPower = 0.0;
+            }
+            flywheelMotor.setVelocity(flywheelPower);
 
             // 3. Intake Controls
             double feederPower = 0.0;
+            double intakePower = 0.0;
             if (gamepad1.right_bumper) {
-                feederPower = RobotConstants.FEEDER_SPEED;  // Feed in
+                intakePower = RobotConstants.INTAKE_SPEED;  // Intake
             } else if (gamepad1.left_bumper) {
-                feederPower = -RobotConstants.FEEDER_SPEED; // Reverse
+                intakePower = -RobotConstants.INTAKE_SPEED; // Outtake
+            }
+            intakeMotor.setPower(intakePower);
+
+            if (gamepad1.right_trigger > 0.5) {
+                feederPower = RobotConstants.FEEDER_SPEED;
             }
             feederServo.setPower(feederPower);
-            intakeMotor.setPower(feederPower); // Just copy the feeder power, close enough
 
-            // 4. Pollen Pusher Servo Arm Position
-            double pusherPosition = RobotConstants.PUSHER_POS_DOWN; // Default retracted
-            if (gamepad1.y) {
-                pusherPosition = RobotConstants.PUSHER_POS_UP; // Fully Extended position
+            // 4. Pollen Pusher Controls
+            if (gamepad1.dpad_down) {
+                pusherPosition = RobotConstants.PUSHER_POS_DOWN;
+            } else if (gamepad1.dpad_up) {
+                pusherPosition = RobotConstants.PUSHER_POS_UP;
             }
             pusherServo.setPosition(pusherPosition);
 

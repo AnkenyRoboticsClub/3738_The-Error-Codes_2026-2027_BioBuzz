@@ -4,9 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.constants.RobotConstants;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,13 +16,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Autonomous(name = "Playback BioBuzz Path", group = "Autonomous")
+@Autonomous
 public class PlaybackBioBuzzPath extends LinearOpMode {
 
     // BioBuzz Starter Bot Configuration
     private DcMotor leftDrive;
     private DcMotor rightDrive;
-    private DcMotor flywheelMotor;
+    private DcMotorEx flywheelMotor;
     private CRServo feederServo;
     private DcMotor intakeMotor;
     private Servo pusherServo;
@@ -50,13 +52,13 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Hardware Mapping matching REV Starter Bot defaults
-        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
-        flywheelMotor = hardwareMap.get(DcMotor.class, "flywheelMotor");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor"); // Hardware Mapped Intake Motor
-        feederServo = hardwareMap.get(CRServo.class, "feederServo");
-        pusherServo = hardwareMap.get(Servo.class, "pusherServo");
+        // Hardware maps
+        leftDrive = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_TANK_LEFT);
+        rightDrive = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_TANK_RIGHT);
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.MOTOR_FLY);
+        feederServo = hardwareMap.get(CRServo.class, RobotConstants.SERVO_FEEDER);
+        intakeMotor = hardwareMap.get(DcMotor.class, RobotConstants.MOTOR_INTAKE);
+        pusherServo = hardwareMap.get(Servo.class, RobotConstants.SERVO_PUSHER);
 
         // Starter bot basic direction setup
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -112,7 +114,7 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
                 // Apply the recorded hardware instructions
                 leftDrive.setPower(currentFrame.leftPower);
                 rightDrive.setPower(currentFrame.rightPower);
-                flywheelMotor.setPower(currentFrame.flywheelPower);
+                flywheelMotor.setVelocity(currentFrame.flywheelPower);
                 feederServo.setPower(currentFrame.feederPower);
                 intakeMotor.setPower(currentFrame.feederPower);
                 pusherServo.setPosition(currentFrame.pusherPosition);
