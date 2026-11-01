@@ -32,6 +32,7 @@ public class RecordBioBuzzPath extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private double nextRecordTime = 0.0;
     private final double RECORD_INTERVAL_SECS = 0.020; // 20ms (50Hz sampling)
+    private final double DRIVE_SPEED_MULTIPLIER = 1.0; // Scale down drive powers (0.4 = 40% speed)
 
     // RAM Buffer to prevent I/O blocking/lag during OpMode execution
     private final ArrayList<String> logBuffer = new ArrayList<>();
@@ -78,16 +79,15 @@ public class RecordBioBuzzPath extends LinearOpMode {
                 rightPower /= max;
             }
 
-            // Slow down
-            double powerMult = 0.5;
-            leftPower *= powerMult;
-            rightPower *= powerMult;
+            // Scale drive powers
+            leftPower *= DRIVE_SPEED_MULTIPLIER;
+            rightPower *= DRIVE_SPEED_MULTIPLIER;
 
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
 
             // 2. Flywheel Launcher Controls
-            double flywheelPower = 0.0;
+            double flywheelPower;
             if (gamepad1.left_trigger > 0.5) {
                 flywheelPower = RobotConstants.FLYWHEEL_TARGET_VELOCITY;
             } else {
@@ -131,7 +131,7 @@ public class RecordBioBuzzPath extends LinearOpMode {
             // 6. Safe RAM Logging (No disk writes while active)
             if (isRecording && runtime.seconds() >= nextRecordTime) {
                 nextRecordTime += RECORD_INTERVAL_SECS;
-                // CSV Scheme: time, left, right, flywheel, feeder, pusher
+                // CSV Scheme: time, left, right, flywheel, feeder, pusherg
                 String line = String.format(java.util.Locale.US, "%.3f,%.2f,%.2f,%.2f,%.2f,%.2f",
                         runtime.seconds(), leftPower, rightPower, flywheelPower, feederPower, pusherPosition);
                 logBuffer.add(line);
@@ -150,9 +150,9 @@ public class RecordBioBuzzPath extends LinearOpMode {
                     writer.println(line);
                 }
                 writer.flush();
-                telemetry.log().add("Successfully saved path to: " + logFile.getName());
+                telemetry.addData("Successfully saved path to", logFile.getName());
             } catch (IOException e) {
-                telemetry.log().add("File write error: " + e.getMessage());
+                telemetry.addData("File write error", e.getMessage());
             }
             telemetry.update();
         }
