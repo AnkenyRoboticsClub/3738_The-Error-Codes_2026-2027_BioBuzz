@@ -68,12 +68,14 @@ public class AidenStarterBot extends LinearOpMode {
                  * Right/left trigger (squish): feeder/flywheel
                  *
                  * New:
-                 * Right/left bumper: feeder/(NONE)?
+                 * Right/left bumper: feeder/(outtake)
                  * Right/left trigger (squish): flywheel/intake
                  */
 
                 if (gamepad1.right_bumper) {
                     manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
+                } else if (gamepad1.left_bumper) {
+                    manualIntakeInput = -RobotConstants.INTAKE_SPEED; // Outtake
                 }
 
                 if (gamepad1.left_trigger > 0.5) {

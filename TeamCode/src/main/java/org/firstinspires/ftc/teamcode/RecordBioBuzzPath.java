@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -50,6 +51,10 @@ public class RecordBioBuzzPath extends LinearOpMode {
         // Starter bot basic direction setup
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        feederServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        flywheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         double pusherPosition = RobotConstants.PUSHER_POS_UP; // Set pollen pusher up at start
 
@@ -131,9 +136,9 @@ public class RecordBioBuzzPath extends LinearOpMode {
             // 6. Safe RAM Logging (No disk writes while active)
             if (isRecording && runtime.seconds() >= nextRecordTime) {
                 nextRecordTime += RECORD_INTERVAL_SECS;
-                // CSV Scheme: time, left, right, flywheel, feeder, pusherg
-                String line = String.format(java.util.Locale.US, "%.3f,%.2f,%.2f,%.2f,%.2f,%.2f",
-                        runtime.seconds(), leftPower, rightPower, flywheelPower, feederPower, pusherPosition);
+                // CSV Scheme: time, left, right, flywheel, feeder, pusher, intake
+                String line = String.format(java.util.Locale.US, "%.3f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+                        runtime.seconds(), leftPower, rightPower, flywheelPower, feederPower, pusherPosition, intakePower);
                 logBuffer.add(line);
             }
 

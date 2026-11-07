@@ -56,7 +56,7 @@ public class PollenManipulator {
         flyWheel = hardwareMap.get(DcMotorEx.class, RobotConstants.MOTOR_FLY);
 
         // Change directions if they backwards
-        pollenIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        pollenIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         pollenFeeder.setDirection(DcMotorSimple.Direction.FORWARD);
         flyWheel.setDirection(DcMotorSimple.Direction.FORWARD);
 

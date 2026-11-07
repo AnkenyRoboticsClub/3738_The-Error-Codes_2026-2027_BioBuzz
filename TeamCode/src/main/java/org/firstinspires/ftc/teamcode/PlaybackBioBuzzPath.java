@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -35,14 +36,16 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
         double flywheelPower;
         double feederPower;
         double pusherPosition;
+        double intakePower;
 
-        DriveFrame(double timestamp, double leftPower, double rightPower, double flywheelPower, double feederPower, double pusherPosition) {
+        DriveFrame(double timestamp, double leftPower, double rightPower, double flywheelPower, double feederPower, double pusherPosition, double intakePower) {
             this.timestamp = timestamp;
             this.leftPower = leftPower;
             this.rightPower = rightPower;
             this.flywheelPower = flywheelPower;
             this.feederPower = feederPower;
             this.pusherPosition = pusherPosition;
+            this.intakePower = intakePower;
         }
     }
 
@@ -64,6 +67,10 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        feederServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        flywheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
         // Track path location
         File logFile = AppUtil.getInstance().getSettingsFile("biobuzz_path.csv");
 
@@ -78,15 +85,16 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
                     if (line.trim().isEmpty()) continue;
 
                     String[] tokens = line.split(",");
-                    if (tokens.length >= 6) {
+                    if (tokens.length >= 7) {
                         double timestamp = Double.parseDouble(tokens[0]);
                         double leftPower = Double.parseDouble(tokens[1]);
                         double rightPower = Double.parseDouble(tokens[2]);
                         double flywheelPower = Double.parseDouble(tokens[3]);
                         double feederPower = Double.parseDouble(tokens[4]);
                         double pusherPosition = Double.parseDouble(tokens[5]);
+                        double intakePower = Double.parseDouble(tokens[6]);
 
-                        playbackBuffer.add(new DriveFrame(timestamp, leftPower, rightPower, flywheelPower, feederPower, pusherPosition));
+                        playbackBuffer.add(new DriveFrame(timestamp, leftPower, rightPower, flywheelPower, feederPower, pusherPosition, intakePower));
                     }
                 }
                 telemetry.addData("Status", "Successfully loaded path!");
@@ -116,7 +124,7 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
                 rightDrive.setPower(currentFrame.rightPower);
                 flywheelMotor.setVelocity(currentFrame.flywheelPower);
                 feederServo.setPower(currentFrame.feederPower);
-                intakeMotor.setPower(currentFrame.feederPower);
+                intakeMotor.setPower(currentFrame.intakePower);
                 pusherServo.setPosition(currentFrame.pusherPosition);
 
                 // Advance to the next instruction frame
