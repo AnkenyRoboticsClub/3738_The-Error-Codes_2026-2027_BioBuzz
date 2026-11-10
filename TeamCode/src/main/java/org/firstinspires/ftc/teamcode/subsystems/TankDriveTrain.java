@@ -17,6 +17,13 @@ import org.firstinspires.ftc.teamcode.constants.RobotConstants;
  * This class handles hardware maps, initialization, and movement math required to drive a robot.
  */
 public class TankDriveTrain {
+    /**
+     * Drive input curve<br>
+     * Uses cubic function for more precise slow driving<br>
+     * 0 is linear, 1 is cubic curve (aggressive)
+     */
+    private double driveInputCurve = 0.0;
+
     // Initialize hardware variables
     private final DcMotor leftDrive;
     private final DcMotor rightDrive;
@@ -63,8 +70,8 @@ public class TankDriveTrain {
      * @param turn Rotational power input
      */
     public void drive(double driveY, double turn) {
-        driveY = applyDeadzone(driveY);
-        turn = applyDeadzone(turn);
+        driveY = filterInput(driveY);
+        turn = filterInput(turn);
 
         turn *= RobotConstants.TURN_MULTIPLIER;
 
@@ -113,11 +120,30 @@ public class TankDriveTrain {
         return imu.getRobotAngularVelocity(AngleUnit.DEGREES);
     }
 
-    private double applyDeadzone(double input) {
+    /**
+     * Sets drive inputCurve<br>
+     * 0.0 is linear, 1.0 is cubic curve (aggressive)
+     * @param inputCurve Value between 0.0 and 1.0
+     */
+    public void setDriveInputCurve(double inputCurve) {
+        this.driveInputCurve = inputCurve;
+    }
+
+    public double getDriveInputCurve() {
+        return this.driveInputCurve;
+    }
+
+    /**
+     * @param input Controller stick input
+     * @return Input with applied controller deadzone and drive input curve
+     * @see setDriveInputCurve
+     */
+    private double filterInput(double input) {
         if (Math.abs(input) < RobotConstants.CONTROLLER_DEADZONE) {
             return 0;
         } else {
-            return input;
+            // Input with cubic curve applied
+            return (driveInputCurve*(Math.pow(input, 3)))+((1-driveInputCurve)*input);
         }
     }
 }
