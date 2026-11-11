@@ -34,6 +34,7 @@ public class RecordBioBuzzPath extends LinearOpMode {
     private double nextRecordTime = 0.0;
     private final double RECORD_INTERVAL_SECS = 0.020; // 20ms (50Hz sampling)
     private final double DRIVE_SPEED_MULTIPLIER = 1.0; // Scale down drive powers (0.4 = 40% speed)
+    private final double DRIVE_INPUT_CURVE = 0.6;
 
     // RAM Buffer to prevent I/O blocking/lag during OpMode execution
     private final ArrayList<String> logBuffer = new ArrayList<>();
@@ -74,6 +75,19 @@ public class RecordBioBuzzPath extends LinearOpMode {
             // 1. Tank Drive Controls
             double drive = -gamepad1.left_stick_y;
             double turn = -gamepad1.right_stick_x;
+
+            // Deadzone filter
+            if (Math.abs(drive) < RobotConstants.CONTROLLER_DEADZONE) {
+                drive = 0;
+            }
+            if (Math.abs(turn) < RobotConstants.CONTROLLER_DEADZONE) {
+                turn = 0;
+            }
+
+            // Filter stick inputs
+            drive = (DRIVE_INPUT_CURVE*(Math.pow(drive, 3)))+((1-DRIVE_INPUT_CURVE)*drive);
+            turn = (DRIVE_INPUT_CURVE*(Math.pow(turn, 3)))+((1-DRIVE_INPUT_CURVE)*turn);
+
             double leftPower = drive + turn;
             double rightPower = drive - turn;
 

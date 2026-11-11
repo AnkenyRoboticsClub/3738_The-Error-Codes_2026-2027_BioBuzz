@@ -44,6 +44,7 @@ public class StarterBot2627 extends LinearOpMode {
         if (opModeIsActive()) {
             // Code that runs once on start
             pollenPusher.setPosition(RobotConstants.PUSHER_POS_UP);
+            driveTrain.setDriveInputCurve(0.5);
 
             while (opModeIsActive()) {
                 // Set drive inputs
