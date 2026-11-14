@@ -49,8 +49,8 @@ public class TankDriveTrain {
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // If using encoders, uncomment this for better power input accuracy
-        /*leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Reverse direction as needed
         rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);

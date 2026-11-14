@@ -57,6 +57,10 @@ public class RecordBioBuzzPath extends LinearOpMode {
         feederServo.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        // Use encoders for better accuracy
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         double pusherPosition = RobotConstants.PUSHER_POS_UP; // Set pollen pusher up at start
 
         // Control Hub Scoped Storage Path (Safe for Android 10+)
