@@ -65,21 +65,22 @@ public class EmetWestleyDrive extends LinearOpMode {
                  * Right/left trigger (squish): feeder/flywheel
                  *
                  * New:
-                 * Right/left bumper: feeder/(outtake)
-                 * Right/left trigger (squish): flywheel/intake
+                 * Right/left bumper: intake/outtake
+                 * Right/left trigger (squish): feeder/flywheel
+                 * YES THEY ARE SAME this is just documenting changes
                  */
 
                 if (gamepad1.right_bumper) {
-                    manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
+                    manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
                 } else if (gamepad1.left_bumper) {
                     manualIntakeInput = -RobotConstants.INTAKE_SPEED; // Outtake
                 }
 
-                if (gamepad1.left_trigger > 0.5) {
-                    manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
+                if (gamepad1.right_trigger > 0.5) {
+                    manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
                 }
 
-                if (gamepad1.right_trigger > 0.5 || gamepad1.b) {
+                if (gamepad1.left_trigger > 0.5 || gamepad1.b) {
                     manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
                 } else if (gamepad1.y) {
                     manualFlywheelTarget = -RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Backwards!
