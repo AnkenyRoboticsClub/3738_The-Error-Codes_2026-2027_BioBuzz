@@ -85,7 +85,7 @@ public class StarterBot2627 extends LinearOpMode {
                 // If active, set motor powers
                 if (isManualInputActive) {
                     pollenManipulator.setManualControls(manualIntakeInput, manualFeederInput, manualFlywheelTarget);
-                } else if (pollenManipulator.getCurrentState() == PollenManipulator.State.MANUAL_CONTROL || gamepad1.b) {
+                } else if (pollenManipulator.getCurrentState() == PollenManipulator.State.MANUAL_CONTROL) {
                     // If no manual controls are being given, stop overriding to allow for regular pollen manipulation
                     pollenManipulator.disableOverride();
                 }
@@ -126,7 +126,7 @@ public class StarterBot2627 extends LinearOpMode {
         YawPitchRollAngles orientation = driveTrain.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = driveTrain.getRobotAngularVelocity();
 
-        telemetry.addLine("Hold a for intake, tap x for launch sequence");
+        telemetry.addLine("Tap x for launch sequence");
         telemetry.addData("Current intake state", pollenManipulator.getCurrentState());
         telemetry.addData("Intake velocity", (int) pollenManipulator.getFlywheelVelocity());
         telemetry.addLine();
