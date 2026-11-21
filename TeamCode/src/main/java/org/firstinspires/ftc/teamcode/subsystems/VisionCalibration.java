@@ -4,9 +4,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.constants.RobotConstants;
 
@@ -25,7 +23,6 @@ public class VisionCalibration {
      */
 
     // Initialize hardware variables
-    private final IMU imu;
     private final Limelight3A limelight;
 
     // Speed multiplier
@@ -39,14 +36,7 @@ public class VisionCalibration {
      * @param hardwareMap Just say hardwareMap in the parenthesis for it to work.
      */
     public VisionCalibration(HardwareMap hardwareMap) {
-        imu = hardwareMap.get(IMU.class, RobotConstants.IMU_NAME);
         limelight = hardwareMap.get(Limelight3A.class, RobotConstants.LIMELIGHT_NAME);
-
-        // Initialize IMU
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RobotConstants.IMU_LOGO_DIRECTION,
-                RobotConstants.IMU_USB_DIRECTION));
-        imu.initialize(parameters);
 
         // Initialize Limelight
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
@@ -65,6 +55,10 @@ public class VisionCalibration {
      */
     public boolean rotateAndDistanceAlign(TankDriveTrain drive, int targetId) {
         LLResult result = limelight.getLatestResult(); // Get latest picture
+        if (result == null || !result.isValid()) {
+            drive.drive(0, 0);
+            return false; // Give up
+        }
         FiducialResult targetTag = null;
 
         // Find the target tag
@@ -72,6 +66,7 @@ public class VisionCalibration {
         for (FiducialResult tag : tags) {
             if (tag.getFiducialId() == targetId) {
                 targetTag = tag; // Found single tag
+                break; // Stop looking
             }
         }
 
@@ -81,6 +76,10 @@ public class VisionCalibration {
 
     public boolean rotateAndDistanceAlign(TankDriveTrain drive, int targetId1, int targetId2) {
         LLResult result = limelight.getLatestResult(); // Get latest picture
+        if (result == null || !result.isValid()) {
+            drive.drive(0, 0);
+            return false; // Give up
+        }
         FiducialResult targetTag = null;
 
         // Find the target tag
@@ -88,6 +87,7 @@ public class VisionCalibration {
         for (FiducialResult tag : tags) {
             if (tag.getFiducialId() == targetId1 || tag.getFiducialId() == targetId2) {
                 targetTag = tag; // Found one of the two tags
+                break; // Stop looking
             }
         }
 
@@ -97,7 +97,7 @@ public class VisionCalibration {
 
     private boolean setDriveOutputs(TankDriveTrain drive, LLResult result, FiducialResult targetTag) {
         // If the robot can't see anything, stop
-        if (result == null || !result.isValid() || targetTag == null) {
+        if (targetTag == null) {
             drive.drive(0, 0);
             return false; // Failure, oh no.
         }

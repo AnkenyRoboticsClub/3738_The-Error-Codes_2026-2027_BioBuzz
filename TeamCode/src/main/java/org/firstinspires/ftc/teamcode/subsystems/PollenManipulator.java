@@ -100,7 +100,7 @@ public class PollenManipulator {
     }
 
     /**
-     * Manual Override Interface for TeleOp
+     * Manual TeleOp control setter
      * Calling this transitions the subsystem to MANUAL_OVERRIDE state.
      *
      * @param intakePower Power for the intake (-1.0 to 1.0)
