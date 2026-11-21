@@ -22,14 +22,12 @@ import org.firstinspires.ftc.teamcode.constants.RobotConstants;
 public class PollenManipulator {
     /**
      * HOLD: Everything stopped<br>
-     * INTAKING: Intake running forward, flywheel stopped<br>
      * FLY_SPINUP: Flywheel running, intake stopped (waiting to reach speed)<br>
      * LAUNCH: Flywheel running, intake running forward to feed pollen into flywheel<br>
      * LAUNCH_MANUAL_HALT: Same as LAUNCH, does not automatically stop after launching one pollen
      */
     public enum State {
         HOLD,
-        INTAKING,
         FLY_SPINUP,
         LAUNCH,
         LAUNCH_MANUAL_HALT,
@@ -134,11 +132,6 @@ public class PollenManipulator {
         switch (currentState) {
             case HOLD:
                 pollenIntake.setPower(0.0);
-                pollenFeeder.setPower(0.0);
-                flyWheel.setPower(0.0);
-                break;
-            case INTAKING:
-                pollenIntake.setPower(RobotConstants.INTAKE_SPEED);
                 pollenFeeder.setPower(0.0);
                 flyWheel.setPower(0.0);
                 break;
