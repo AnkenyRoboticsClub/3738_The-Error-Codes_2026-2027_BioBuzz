@@ -84,10 +84,15 @@ public class VisionCalibration {
 
         // Find the target tag
         List<FiducialResult> tags = result.getFiducialResults();
+        double largestTagArea = -1.0;
+
         for (FiducialResult tag : tags) {
             if (tag.getFiducialId() == targetId1 || tag.getFiducialId() == targetId2) {
-                targetTag = tag; // Found one of the two tags
-                break; // Stop looking
+                // Found correct tag, now find one is larger than the other
+                if (tag.getTargetArea() > largestTagArea) {
+                    largestTagArea = tag.getTargetArea();
+                    targetTag = tag;
+                }
             }
         }
 
@@ -121,7 +126,7 @@ public class VisionCalibration {
         //else { drive.drive(0, -0.15); }
 
         // Spin robot using curve (PID in a way)
-        drive.drive(speedDegreeMultiplier * ty, speedDegreeMultiplier * tx); // Spin the way that tx and ty is
+        drive.drive(speedDegreeMultiplier * -ty, speedDegreeMultiplier * tx); // Spin the way that tx and ty is
 
         return false; // Still turning...
     }
