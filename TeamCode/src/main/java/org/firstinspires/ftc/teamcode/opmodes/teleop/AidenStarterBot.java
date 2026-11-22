@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PollenManipulator;
 import org.firstinspires.ftc.teamcode.subsystems.TankDriveTrain;
 
 @TeleOp
-public class EmetWestleyDrive extends LinearOpMode {
+public class AidenStarterBot extends LinearOpMode {
     // Starter bot OpMode for 2026-2027 season
 
     // Devices and systems
@@ -47,8 +47,11 @@ public class EmetWestleyDrive extends LinearOpMode {
 
             while (opModeIsActive()) {
                 // Set drive inputs
-                double driveY = -gamepad1.left_stick_y;
-                double turn = gamepad1.right_stick_x;
+                // Drive controls: drive forward and turn both on left stick
+                // Forward is intake-side forward, not launcher-side forward
+
+                double driveY = gamepad1.left_stick_y;
+                double turn = gamepad1.left_stick_x;
 
                 // Update launch button status
                 boolean newLaunchPress = gamepad1.x && !xPressed;
@@ -65,22 +68,21 @@ public class EmetWestleyDrive extends LinearOpMode {
                  * Right/left trigger (squish): feeder/flywheel
                  *
                  * New:
-                 * Right/left bumper: intake/outtake
-                 * Right/left trigger (squish): feeder/flywheel
-                 * YES THEY ARE SAME this is just documenting changes
+                 * Right/left bumper: feeder/(outtake)
+                 * Right/left trigger (squish): flywheel/intake
                  */
 
                 if (gamepad1.right_bumper) {
-                    manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
+                    manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
                 } else if (gamepad1.left_bumper) {
                     manualIntakeInput = -RobotConstants.INTAKE_SPEED; // Outtake
                 }
 
-                if (gamepad1.right_trigger > 0.5) {
-                    manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
+                if (gamepad1.left_trigger > 0.5) {
+                    manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
                 }
 
-                if (gamepad1.left_trigger > 0.5 || gamepad1.b) {
+                if (gamepad1.right_trigger > 0.5 || gamepad1.b) {
                     manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
                 } else if (gamepad1.y) {
                     manualFlywheelTarget = -RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Backwards!

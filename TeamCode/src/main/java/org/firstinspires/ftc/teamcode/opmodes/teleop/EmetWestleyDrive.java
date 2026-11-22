@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PollenManipulator;
 import org.firstinspires.ftc.teamcode.subsystems.TankDriveTrain;
 
 @TeleOp
-public class StarterBot2627 extends LinearOpMode {
+public class EmetWestleyDrive extends LinearOpMode {
     // Starter bot OpMode for 2026-2027 season
 
     // Devices and systems
@@ -44,7 +44,6 @@ public class StarterBot2627 extends LinearOpMode {
         if (opModeIsActive()) {
             // Code that runs once on start
             pollenPusher.setPosition(RobotConstants.PUSHER_POS_UP);
-            driveTrain.setDriveInputCurve(0.5);
 
             while (opModeIsActive()) {
                 // Set drive inputs
@@ -61,7 +60,17 @@ public class StarterBot2627 extends LinearOpMode {
                 manualFeederInput = 0.0;
                 manualFlywheelTarget = 0.0;
 
-                if (gamepad1.right_bumper || gamepad1.a) {
+                /* Old:
+                 * Right/left bumper: intake/outtake
+                 * Right/left trigger (squish): feeder/flywheel
+                 *
+                 * New:
+                 * Right/left bumper: intake/outtake
+                 * Right/left trigger (squish): feeder/flywheel
+                 * YES THEY ARE SAME this is just documenting changes
+                 */
+
+                if (gamepad1.right_bumper) {
                     manualIntakeInput = RobotConstants.INTAKE_SPEED; // Forward intake
                 } else if (gamepad1.left_bumper) {
                     manualIntakeInput = -RobotConstants.INTAKE_SPEED; // Outtake
