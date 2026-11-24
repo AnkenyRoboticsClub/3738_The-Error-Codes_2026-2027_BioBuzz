@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.shadowrecord;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,8 +16,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-//@TeleOp(group = "Path Recording")
-public abstract class RecordBioBuzzPath extends LinearOpMode {
+// Not needed here anymore (not an OpMode) - @TeleOp(group = "Path Recording")
+public abstract class RecordPathBase extends LinearOpMode {
     protected abstract String getShadowFileName();
   
     // BioBuzz Starter Bot Configuration
