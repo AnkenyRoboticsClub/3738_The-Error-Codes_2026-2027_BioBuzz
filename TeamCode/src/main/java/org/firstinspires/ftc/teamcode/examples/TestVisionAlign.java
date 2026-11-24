@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.examples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Utility;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.TankDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.VisionCalibration;
 
-@Autonomous
+@Utility // Shows up in 3 dots -- "Utility OpModes" on Driver Station
 public class TestVisionAlign extends LinearOpMode {
     private TankDriveTrain drive;
     private VisionCalibration vision;

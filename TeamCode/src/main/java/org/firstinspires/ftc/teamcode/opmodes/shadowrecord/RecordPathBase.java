@@ -162,6 +162,7 @@ public abstract class RecordPathBase extends LinearOpMode {
             }
 
             telemetry.addData("Recording Active", isRecording);
+            telemetry.addData("Pathing File", getShadowFileName());
             telemetry.addData("Buffered Frames", logBuffer.size());
             telemetry.addData("Time Elapsed (s)", Math.round(runtime.seconds() * 100.0) / 100.0);
             telemetry.update();

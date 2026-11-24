@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.shadowplayback;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -17,8 +16,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Autonomous
-public class PlaybackBioBuzzPath extends LinearOpMode {
+public abstract class PlaybackPathBase extends LinearOpMode {
+    protected abstract String getShadowFileName();
 
     // BioBuzz Starter Bot Configuration
     private DcMotor leftDrive;
@@ -76,7 +75,7 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Track path location
-        File logFile = AppUtil.getInstance().getSettingsFile("biobuzz_path.csv");
+        File logFile = AppUtil.getInstance().getSettingsFile(getShadowFileName());
 
         // Load and Parse the CSV during initialization to avoid loop lag
         telemetry.addData("Status", "Loading recording file...");
@@ -137,6 +136,7 @@ public class PlaybackBioBuzzPath extends LinearOpMode {
 
             // Keep drivers updated on progress
             telemetry.addData("Status", "Playing Back Path");
+            telemetry.addData("Pathing File", getShadowFileName());
             telemetry.addData("Progress", "%d / %d Frames", currentFrameIndex, playbackBuffer.size());
             telemetry.addData("Time (s)", "%.2f", currentElapsedTime);
             telemetry.update();
