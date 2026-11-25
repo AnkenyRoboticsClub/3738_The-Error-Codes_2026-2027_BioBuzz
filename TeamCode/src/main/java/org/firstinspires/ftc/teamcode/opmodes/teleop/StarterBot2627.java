@@ -24,6 +24,8 @@ public class StarterBot2627 extends LinearOpMode {
 
     // Statuses
     private boolean xPressed = false;
+    private boolean leftTriggerPressed = false;
+    private boolean flywheelToggle = false;
     private double manualIntakeInput = 0.0;
     private double manualFeederInput = 0.0;
     private double manualFlywheelTarget = 0.0;
@@ -51,9 +53,22 @@ public class StarterBot2627 extends LinearOpMode {
                 double driveY = -gamepad1.left_stick_y;
                 double turn = gamepad1.right_stick_x;
 
-                // Update launch button status
+                // Update button statuses
                 boolean newLaunchPress = gamepad1.x && !xPressed;
                 xPressed = gamepad1.x;
+
+                // Flywheel toggle
+                boolean leftTriggerDown = (gamepad1.left_trigger > 0.5); // Check if pressed
+                if (leftTriggerDown && !leftTriggerPressed) {
+                    // Do on press and if not previously pressed (if new press, NOT hold):
+                    flywheelToggle = !flywheelToggle; // Flip flywheel toggle
+                }
+                leftTriggerPressed = leftTriggerDown; // Track previous press (held or not held)
+
+                // Stop toggle if in auto launch sequence or reversing
+                if (newLaunchPress || gamepad1.y) {
+                    flywheelToggle = false;
+                }
 
                 // ---------- Manual controls ----------
                 // Set inputs to zero, so when input is released movement stops
@@ -71,7 +86,7 @@ public class StarterBot2627 extends LinearOpMode {
                     manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
                 }
 
-                if (gamepad1.left_trigger > 0.5 || gamepad1.b) {
+                if (flywheelToggle || gamepad1.b) {
                     manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
                 } else if (gamepad1.y) {
                     manualFlywheelTarget = -RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Backwards!
