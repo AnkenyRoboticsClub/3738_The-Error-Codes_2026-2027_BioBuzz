@@ -24,6 +24,8 @@ public class EmetWestleyDrive extends LinearOpMode {
 
     // Statuses
     private boolean xPressed = false;
+    private boolean yPressed = false;
+    private boolean pusherToggle = false;
     private double manualIntakeInput = 0.0;
     private double manualFeederInput = 0.0;
     private double manualFlywheelTarget = 0.0;
@@ -47,7 +49,7 @@ public class EmetWestleyDrive extends LinearOpMode {
 
             while (opModeIsActive()) {
                 // Set drive inputs
-                double driveY = -gamepad1.left_stick_y;
+                double driveY = gamepad1.left_stick_y;
                 double turn = gamepad1.right_stick_x;
 
                 // Update launch button status
@@ -80,9 +82,9 @@ public class EmetWestleyDrive extends LinearOpMode {
                     manualFeederInput = RobotConstants.FEEDER_SPEED; // Forward feeder
                 }
 
-                if (gamepad1.left_trigger > 0.5 || gamepad1.b) {
+                if (gamepad1.left_trigger > 0.5) {
                     manualFlywheelTarget = RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Run manual flywheel
-                } else if (gamepad1.y) {
+                } else if (gamepad1.b) {
                     manualFlywheelTarget = -RobotConstants.FLYWHEEL_TARGET_VELOCITY; // Backwards!
                 }
 
@@ -117,9 +119,15 @@ public class EmetWestleyDrive extends LinearOpMode {
                 pollenManipulator.run();
 
                 // Servo control for poking out pollen
-                if (gamepad1.dpad_down) {
+                if (gamepad1.y && !yPressed) {
+                    // Do on press and if not previously pressed (if new press, NOT hold):
+                    pusherToggle = !pusherToggle; // Flip pusher toggle
+                }
+                yPressed = gamepad1.y; // Track previous press (held or not held)
+
+                if (pusherToggle) {
                     pollenPusher.setPosition(RobotConstants.PUSHER_POS_DOWN);
-                } else if (gamepad1.dpad_up) {
+                } else {
                     pollenPusher.setPosition(RobotConstants.PUSHER_POS_UP);
                 }
 
